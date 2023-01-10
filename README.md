@@ -33,3 +33,25 @@ void main()
    FragColor = vec4(0.8f, 0.3f, 0.02f, 1.0f);
 }
 ```
+
+Resulting header file will look like this.
+
+```
+#pragma once
+
+// Generated from example.vert
+constexpr const char* generated_example_vert = R"(#version 460 core
+layout (location = 0) in vec3 aPos;
+void main()
+{
+   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
+})";
+
+// Generated from example.frag
+constexpr const char* generated_example_frag = R"(#version 460 core
+out vec4 FragColor;
+void main()
+{
+   FragColor = vec4(0.8f, 0.3f, 0.02f, 1.0f);
+})";
+```

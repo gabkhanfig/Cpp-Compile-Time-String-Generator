@@ -42,7 +42,7 @@ for gen in gens:
     print("Generating constexpr const char* string for file: " + gen)
     lastIndex = gen.rfind("/")
     fileName = gen[lastIndex + 1 : len(gen)]
-    typeIndex = gen.rfind(".")
+    typeIndex = fileName.rfind(".")
     fileStart = fileName[0 : typeIndex]
     fileType = fileName[typeIndex + 1 : len(fileName)]
     variableName = "generated_" + fileStart + "_" + fileType
