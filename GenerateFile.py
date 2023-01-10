@@ -7,10 +7,9 @@ Second argument is the text file containing the files that will be used to gener
 '''
 
 headerFileName = None
-if(len(sys.argv) != 3):
+if(len(sys.argv) < 3):
+    print("Header file name and txt file are required command line arguments")
     exit()
-    #headerFileName = "generatedConstChars.h"
-
 
 headerFileName = sys.argv[1] + ".h"
 files = sys.argv[2]
