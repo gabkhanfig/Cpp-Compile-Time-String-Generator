@@ -38,6 +38,9 @@ def AppendConstCharToHeader(constChar : str):
     header.write("\n")
 
 for gen in gens:
+    if(len(gen) == 0):
+        continue
+
     print("Generating constexpr const char* string for file: " + gen)
     lastIndex = gen.rfind("/")
     fileName = gen[lastIndex + 1 : len(gen)]
