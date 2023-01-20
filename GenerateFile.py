@@ -18,10 +18,27 @@ files = sys.argv[2]
 header = open(headerFileName, "w")
 header.write("#pragma once\n")
 
+imageExtensions = ["png"]
+
 gens = open(files, "r").read().split("\n")
 
+
+# Creates a string formatted as a c++ const char [] and a string length
+def ImageToConstChar(filePath: str, variableName: str):
+    with open(filePath, "rb") as f:
+        lastIndex = filePath.rfind("/")
+        fileName = filePath[lastIndex + 1 : len(filePath)]
+        nums = []
+        while (byte := f.read(1)):
+            nums.append(int.from_bytes(byte))
+        out = "// Generated from " + fileName + ". Use sizeof operator to get the amount of bytes.\nconstexpr const char " + variableName + "[" + str(len(nums)) + "] = { "
+        out += ", ".join(str(n) for n in nums)
+        out += " };"
+        return out
+
 # Creates a string formatted as c++ constexpr const char* variableName = fileContents
-def FileToConstChar(filePath : str, variableName : str):
+def FileToConstChar(filePath: str, variableName: str):
+
     file = open(filePath, "r")
     contents = file.read()
     contents = "R\"(" + contents + ")\";"
@@ -29,7 +46,7 @@ def FileToConstChar(filePath : str, variableName : str):
     lastIndex = filePath.rfind("/")
     fileName = filePath[lastIndex + 1 : len(filePath)]
 
-    return "// Generated from " + fileName + "\nconstexpr const char* " + variableName + " = " + contents
+    return "// Generated from " + fileName + ".\nconstexpr const char* " + variableName + " = " + contents
 
 # Append the const char* string to the header file
 def AppendConstCharToHeader(constChar : str):
@@ -46,8 +63,14 @@ for gen in gens:
     fileName = gen[lastIndex + 1 : len(gen)]
     typeIndex = fileName.rfind(".")
     fileStart = fileName[0 : typeIndex]
+
+    
     fileType = fileName[typeIndex + 1 : len(fileName)]
     variableName = "generated_" + fileStart + "_" + fileType
-    AppendConstCharToHeader(FileToConstChar(gen, variableName))
+    if(fileType in imageExtensions):
+        AppendConstCharToHeader(ImageToConstChar(gen, variableName))
+    else:
+        variableName = "generated_" + fileStart + "_" + fileType
+        AppendConstCharToHeader(FileToConstChar(gen, variableName))
 
 header.close()
